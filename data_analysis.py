@@ -24,7 +24,37 @@ categoricas = ['braf', 'A', 'T', 'sexo', 'localizacion', 'origen_paciente', 'esc
                'resonancias', 'tomografias', 'mastografias', 'radioterapia', 'yodo_radiactivo', 'terapias_hormonales',
                'acido_folico', 'calcio', 'cancer_previo_px', 'cancer_familiar_1', 'numero', 'distribucion', 'localizacion',
                'composicion', 'forma', 'bordes_margen', 'ecogenicidad', 'artefactos_ecogenicos', 'elastografia',
-               'vascularidad', 'ganglios', 'tirads', 'microcarcinomas', 'IMC Categorico']
+               'vascularidad', 'ganglios', 'tirads', 'microcarcinomas', 'IMC categorico']
+
+def basics():
+    # Crear gráfico de barras para la frecuencia de cada grupo y categoría Bethesda
+    ax1 = sns.countplot(x='grupo', data=data, palette=palette)
+    ax1.set_title("Pacientes por grupo")
+    ax1.set_xlabel("Grupo")
+    ax1.set_ylabel("Frecuencia")
+
+    # Agregar etiquetas de frecuencia en las barras
+    for p in ax1.patches:
+        ax1.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='baseline', fontsize=8, color='black', xytext=(0, 3),
+                    textcoords='offset points')
+
+    plt.show()
+
+    # Crear el gráfico de barras para 'bethesda'
+    ax2 = sns.countplot(x='bethesda', data=data, palette=palette)
+    ax2.set_title("Pacientes por categoría Bethesda")
+    ax2.set_xlabel("Categoría Bethesda")
+    ax2.set_ylabel("Frecuencia")
+
+    # Agregar etiquetas de frecuencia en las barras
+    for p in ax2.patches:
+        ax2.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='baseline', fontsize=8, color='black', xytext=(0, 3),
+                    textcoords='offset points')
+
+    plt.show()
+
 
 def analisis_numericas():
     # Limpiar datos: convertir a numérico y encontrar valores no válidos
@@ -46,35 +76,6 @@ def analisis_numericas_grouped(data, grupo_col):
         # Imprimir estadísticas
         print(f"\nEstadísticas descriptivas de {col} agrupadas por {grupo_col}:\n")
         print(grouped_stats)
-
-
-'''# Crear gráfico de barras para la frecuencia de cada grupo y categoría Bethesda
-ax1 = sns.countplot(x='grupo', data=data, palette=palette)
-ax1.set_title("Pacientes por grupo")
-ax1.set_xlabel("Grupo")
-ax1.set_ylabel("Frecuencia")
-
-# Agregar etiquetas de frecuencia en las barras
-for p in ax1.patches:
-    ax1.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
-                 ha='center', va='baseline', fontsize=8, color='black', xytext=(0, 3),
-                 textcoords='offset points')
-
-plt.show()
-
-# Crear el gráfico de barras para 'bethesda'
-ax2 = sns.countplot(x='bethesda', data=data, palette=palette)
-ax2.set_title("Pacientes por categoría Bethesda")
-ax2.set_xlabel("Categoría Bethesda")
-ax2.set_ylabel("Frecuencia")
-
-# Agregar etiquetas de frecuencia en las barras
-for p in ax2.patches:
-    ax2.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
-                 ha='center', va='baseline', fontsize=8, color='black', xytext=(0, 3),
-                 textcoords='offset points')
-
-plt.show()'''
 
 
 def analisis_categoricas():
@@ -126,7 +127,9 @@ def analisis_categoricas_grouped(data, grupo_col):
         print(freq_rel)
 
         # Graficar frecuencias absolutas
-        freq_abs.plot(kind='bar', stacked=True, figsize=(10, 6), colormap=palette)
+        colors = sns.color_palette(palette, n_colors=freq_abs.shape[1])
+
+        freq_abs.plot(kind='bar', stacked=True, figsize=(10, 6), color=colors)
         plt.title(f'Distribución de {col} por {grupo_col}')
         plt.ylabel("Frecuencia")
         plt.xlabel(grupo_col)
@@ -135,5 +138,4 @@ def analisis_categoricas_grouped(data, grupo_col):
         plt.tight_layout()
         plt.show()
 
-analisis_numericas()
-analisis_numericas_grouped(data, 'grupo')
+analisis_categoricas_grouped(data, 'grupo')
