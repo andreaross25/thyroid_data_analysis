@@ -26,7 +26,29 @@ categoricas = ['braf', 'A', 'T', 'sexo', 'localizacion', 'origen_paciente', 'esc
                'composicion', 'forma', 'bordes_margen', 'ecogenicidad', 'artefactos_ecogenicos', 'elastografia',
                'vascularidad', 'ganglios', 'tirads', 'microcarcinomas', 'IMC Categorico']
 
-# Crear gráfico de barras para la frecuencia de cada grupo y categoría Bethesda
+def analisis_numericas():
+    # Limpiar datos: convertir a numérico y encontrar valores no válidos
+    for col in numericas:
+        data[col] = pd.to_numeric(data[col], errors='coerce')
+
+    # Descripción general de las variables numéricas
+    print("Estadísticas descriptivas de las variables numéricas:\n")
+    print(data[numericas].describe())
+    
+
+def analisis_numericas_grouped(data, grupo_col):
+    # Limpiar datos: convertir a numérico y encontrar valores no válidos
+    for col in numericas:
+        data[col] = pd.to_numeric(data[col], errors='coerce')
+    
+        grouped_stats = data.groupby(grupo_col)[col].describe()
+        
+        # Imprimir estadísticas
+        print(f"\nEstadísticas descriptivas de {col} agrupadas por {grupo_col}:\n")
+        print(grouped_stats)
+
+
+'''# Crear gráfico de barras para la frecuencia de cada grupo y categoría Bethesda
 ax1 = sns.countplot(x='grupo', data=data, palette=palette)
 ax1.set_title("Pacientes por grupo")
 ax1.set_xlabel("Grupo")
@@ -40,7 +62,7 @@ for p in ax1.patches:
 
 plt.show()
 
-# Crear el gráfico de barras para 'bethesda_x'
+# Crear el gráfico de barras para 'bethesda'
 ax2 = sns.countplot(x='bethesda', data=data, palette=palette)
 ax2.set_title("Pacientes por categoría Bethesda")
 ax2.set_xlabel("Categoría Bethesda")
@@ -52,7 +74,7 @@ for p in ax2.patches:
                  ha='center', va='baseline', fontsize=8, color='black', xytext=(0, 3),
                  textcoords='offset points')
 
-plt.show()
+plt.show()'''
 
 
 def analisis_categoricas():
@@ -104,7 +126,7 @@ def analisis_categoricas_grouped(data, grupo_col):
         print(freq_rel)
 
         # Graficar frecuencias absolutas
-        freq_abs.plot(kind='bar', stacked=True, figsize=(10, 6), colormap=palette, palette=palette)
+        freq_abs.plot(kind='bar', stacked=True, figsize=(10, 6), colormap=palette)
         plt.title(f'Distribución de {col} por {grupo_col}')
         plt.ylabel("Frecuencia")
         plt.xlabel(grupo_col)
@@ -113,4 +135,5 @@ def analisis_categoricas_grouped(data, grupo_col):
         plt.tight_layout()
         plt.show()
 
-analisis_categoricas_grouped(data, 'grupo')
+analisis_numericas()
+analisis_numericas_grouped(data, 'grupo')
