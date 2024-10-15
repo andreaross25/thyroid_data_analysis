@@ -21,11 +21,11 @@ data = pd.read_excel('thyroid_merged.xlsx')
 description = data.describe()
 
 # Obtener análisis descriptivo de variables numéricas por grupo
-grouped_description = data.groupby('grupo_x').describe()
+grouped_description = data.groupby('grupo').describe()
 
 # Crear gráfico de barras para la frecuencia de cada grupo y categoría Bethesda
 palette = 'Paired'
-ax1 = sns.countplot(x='grupo_x', data=data, palette=palette)
+ax1 = sns.countplot(x='grupo', data=data, palette=palette)
 ax1.set_title("Pacientes por grupo")
 ax1.set_xlabel("Grupo")
 ax1.set_ylabel("Frecuencia")
@@ -39,7 +39,7 @@ for p in ax1.patches:
 plt.show()
 
 # Crear el gráfico de barras para 'bethesda_x'
-ax2 = sns.countplot(x='bethesda_x', data=data, palette=palette)
+ax2 = sns.countplot(x='bethesda', data=data, palette=palette)
 ax2.set_title("Pacientes por categoría Bethesda")
 ax2.set_xlabel("Categoría Bethesda")
 ax2.set_ylabel("Frecuencia")
@@ -52,3 +52,37 @@ for p in ax2.patches:
 
 plt.show()
 
+categoricas = ['braf', 'A', 'T', 'sexo', 'localizacion', 'origen_paciente', 'escolaridad', 'oficio_profesion', 
+               'enfermedades_respiratorias', 'enfermedad_tiroidea', 'tabaquismo', 'alcoholismo', 'radiografias',
+               'resonancias', 'tomografias', 'mastografias', 'radioterapia', 'yodo_radiactivo', 'terapias_hormonales',
+               'acido_folico', 'calcio', 'cancer_previo_px', 'cancer_familiar_1', 'numero', 'distribucion', 'localizacion',
+               'composicion', 'forma', 'bordes_margen', 'ecogenicidad', 'artefactos_ecogenicos', 'elastografia',
+               'vascularidad', 'ganglios', 'tirads', 'microcarcinomas']
+
+for col in categoricas:
+    # Filtrar los valores que no sean 'REPORTE PENDIENTE'
+    filtered_data = data[data[col] != 'REPORTE PENDIENTE']
+
+    print(f"\nAnálisis de la columna: {col}")
+    freq_abs = data[col].value_counts(dropna=True)  # Frecuencia absoluta
+    freq_rel = data[col].value_counts(normalize=True, dropna=True) * 100  # Frecuencia relativa
+    analysis = pd.DataFrame({'Frecuencia': freq_abs, 'Porcentaje (%)': freq_rel})
+    print(analysis)
+
+# Crear los gráficos
+    plt.figure(figsize=(8, 4))
+    ax = sns.countplot(x=col, data=filtered_data, order=filtered_data[col].value_counts().index, palette=palette)
+    
+    # Añadir las etiquetas con la frecuencia en la parte superior de las barras
+    for p in ax.patches:
+        ax.annotate(f'{int(p.get_height())}', 
+                    (p.get_x() + p.get_width() / 2., p.get_height()), 
+                    ha='center', va='baseline', fontsize=8, color='black', 
+                    xytext=(0, 5), textcoords='offset points')
+    
+    # Títulos y etiquetas
+    plt.title(col)
+    plt.ylabel("Frecuencia")
+    plt.xlabel(col)
+    plt.xticks(rotation=0)  # Rotar etiquetas si es necesario
+    plt.show()
